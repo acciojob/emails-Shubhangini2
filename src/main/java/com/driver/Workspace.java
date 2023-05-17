@@ -1,4 +1,5 @@
 package com.driver;
+import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -13,11 +14,13 @@ public class Workspace extends Gmail{
     public Workspace(String emailId) {
         // The inboxCapacity is equal to the maximum value an integer can store.
 
+        super(emailId, Integer.MAX_VALUE);
+        this.calendar= new ArrayList<>();
     }
 
     public void addMeeting(Meeting meeting){
         //add the meeting to calendar
-
+        calendar.add(meeting);
     }
 
     public int findMaxMeetings(){
@@ -26,5 +29,22 @@ public class Workspace extends Gmail{
         // 2. If you want to attend a meeting, you must join it at its start time and leave at end time.
         // Example: If a meeting ends at 10:00 am, you cannot attend another meeting starting at 10:00 am
 
+////////  Solution
+        //Sort the meetings by ending time of ArrayList
+        //iterating and checking
+        //Creating a copy of calendar and sorting it
+        List<Meeting> sortedCalendar = new ArrayList<>(List.copyOf(calendar));
+        Collections.sort(sortedCalendar, (x,y) -> x.getEndTime().compareTo(y.getEndTime()));
+        List<Meeting> maxMeetings = new ArrayList<>();
+        LocalTime time_limit = sortedCalendar.get(0).getStartTime();
+        maxMeetings.add(sortedCalendar.get(0));
+
+        for(Meeting meeting : sortedCalendar){
+            if(meeting.getStartTime().compareTo(time_limit)>0){
+                maxMeetings.add(meeting);
+                time_limit = meeting.getStartTime();
+            }
+        }
+        return maxMeetings.size();
     }
 }
